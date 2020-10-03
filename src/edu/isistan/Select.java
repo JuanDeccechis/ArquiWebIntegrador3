@@ -1,12 +1,7 @@
 package edu.isistan;
 
-
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import edu.isistan.dto.DTOReporteInscriptos;
@@ -41,6 +36,9 @@ public class Select {
 			c1 = new Carrera(1, "Tudai");
 			cjpa.insert(c1);
 		}
+		
+		Carrera c2 = new Carrera(3, "Tupar");
+		cjpa.insert(c2);
 		
 		MatriculaJPARepository mjpa = new MatriculaJPARepository();
 		Matricula m1 = new Matricula(e1, c1,fecha, false);

@@ -1,14 +1,7 @@
 package edu.isistan.dto;
 
 import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.ColumnResult;
-import javax.persistence.ConstructorResult;
-import javax.persistence.SqlResultSetMapping;
-
 import edu.isistan.entidad.Carrera;
-import edu.isistan.entidad.Estudiante;
 
 public class DTOEstudiante {
 

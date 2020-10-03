@@ -31,15 +31,9 @@ public class Insert {
 	private static final String path = "src/datasets/";
 
 	public static void main(String[] args) throws ParseException {
-		//		EntityManagerFactory emf = Persistence.createEntityManagerFactory("Example");
-		//		EntityManager em = emf.createEntityManager();
-		//		em.getTransaction().begin();
 
-
-		Calendar cal = GregorianCalendar.getInstance();
-		cal.set(Calendar.DAY_OF_MONTH, 23);
-		cal.set(Calendar.MONTH, 3);
-		cal.set(Calendar.YEAR, 2009);
+		Date parsedDate = new Date(System.currentTimeMillis());
+		Timestamp fecha = new java.sql.Timestamp(parsedDate.getTime());
 
 		//CREACION DE ESTUDIANTES
 		Estudiante e1 = new Estudiante(1,"Pedro", "Perez", 18, "M", 44222444, "Tandil");
@@ -68,10 +62,10 @@ public class Insert {
 		//		carreras.insertCarrera(c2);
 		cargarCarreras(carreras);
 
-		Matricula m1 = new Matricula(e1, c1, new Timestamp(cal.getTimeInMillis()), false, null);
-		Matricula m2 = new Matricula(e2, c1, new Timestamp(cal.getTimeInMillis()), false, null);
-		Matricula m3 = new Matricula(e3, c2, new Timestamp(cal.getTimeInMillis()), false, null);
-		Matricula m4 = new Matricula(e4, c2, new Timestamp(cal.getTimeInMillis()), true,new Timestamp(cal.getTimeInMillis()));
+		Matricula m1 = new Matricula(e1, c1, fecha, false, null);
+		Matricula m2 = new Matricula(e2, c1, fecha, false, null);
+		Matricula m3 = new Matricula(e3, c2, fecha, false, null);
+		Matricula m4 = new Matricula(e4, c2, fecha, true, fecha);
 
 
 		MatriculaJPARepository matriculas = new MatriculaJPARepository();

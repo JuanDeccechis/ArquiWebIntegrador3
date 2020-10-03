@@ -10,12 +10,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import edu.isistan.entidad.Estudiante;
 import edu.isistan.entidad.Matricula;
-import edu.isistan.jparepository.EstudianteJPARepository;
 import edu.isistan.jparepository.MatriculaJPARepository;
-import edu.isistan.rest.EstudianteRestController.RecursoDuplicado;
 
 @Path("/matriculas")
 public class MatriculaRestController {
