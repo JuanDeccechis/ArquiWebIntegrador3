@@ -1,11 +1,8 @@
 package edu.isistan.jparepository;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
 import edu.isistan.entidad.Carrera;
-import edu.isistan.entidad.Estudiante;
 /**
  * @author Belen Enemark
  * @author Juan Deccechis
@@ -13,12 +10,10 @@ import edu.isistan.entidad.Estudiante;
  * Esta clase se ocupa  de insertar la carrera y de actualizar la carrera*/
 public class CarreraJPARepository  implements GenericRepository<Carrera, Integer>{
 
-	private EntityManagerFactory emf = null;
 	private static CarreraJPARepository carrera;
 	
 	/**Controlador de carrera */
 	public CarreraJPARepository() {
-		this.emf = Persistence.createEntityManagerFactory("Example");
 	}	
 	
 	
@@ -31,10 +26,11 @@ public class CarreraJPARepository  implements GenericRepository<Carrera, Integer
 	/** Obtiene el ultimo id del estudiante cargado
 	 * @return ultimoLUEstudiante el ultimo id del estudiante dado de alta*/
 	public Integer getIdUltimaCarrera() {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		List<Carrera> ultimaCarrera= (List<Carrera>) em.createQuery("SELECT C FROM Carrera C ORDER BY C.id DESC", Carrera.class)
 				.setMaxResults(1)
 				.getResultList();
+		em.close();
 		if (ultimaCarrera.size() == 0) {
 			return 0;
 		} else {
@@ -48,7 +44,7 @@ public class CarreraJPARepository  implements GenericRepository<Carrera, Integer
 	public Carrera insert(Carrera carrera) {
 		EntityManager em = null;
 		try {
-			em = emf.createEntityManager();
+			em = EMF.createEntityManager();
 			if (this.getCarreraNombre(carrera.getNombre_carrera()) != null ) {
 				System.out.println("La carrera "+carrera.getNombre_carrera()+" ya se encuentra en la base de datos");
 				return null;
@@ -75,7 +71,7 @@ public class CarreraJPARepository  implements GenericRepository<Carrera, Integer
 	public void update(Carrera carrera) {
 		EntityManager em = null;
 		try {
-			em = emf.createEntityManager();
+			em = EMF.createEntityManager();
 			em.getTransaction().begin();
 			carrera = em.merge(carrera);
 			em.getTransaction().commit();
@@ -97,7 +93,7 @@ public class CarreraJPARepository  implements GenericRepository<Carrera, Integer
 	public void delete(Integer id) {
 		EntityManager em = null;
 		try {
-			em = emf.createEntityManager();
+			em = EMF.createEntityManager();
 			em.getTransaction().begin();
 			Carrera carrera = null;
 			try {
@@ -120,11 +116,10 @@ public class CarreraJPARepository  implements GenericRepository<Carrera, Integer
 	 * @return listado de carreras*/
 	@Override
 	public List<Carrera> getALL(){
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		Query q = em.createNativeQuery("select c.* from Carrera c", Carrera.class);
 		List<Carrera> listado = q.getResultList();
-
-
+		em.close();
 		return listado;
 	}
 	
@@ -135,7 +130,7 @@ public class CarreraJPARepository  implements GenericRepository<Carrera, Integer
 	 * @return em.find devuelve el resultado de la busqueda de la carrera */
 	@Override
 	public Carrera getId(Integer id) {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		try {
 			return em.find(Carrera.class, id);
 		} finally {
@@ -148,11 +143,11 @@ public class CarreraJPARepository  implements GenericRepository<Carrera, Integer
 	 * @param nombreCarrera contiene el nombre de carrera que se esta buscando 
 	 * @return listado.get(0) obtiene la primer carrera encontrada con ese nombre*/
 	public Carrera getCarreraNombre(String nombreCarrera) {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		List<Carrera> listado = em.createQuery("SELECT C FROM Carrera C WHERE C.nombre_carrera =:nombre ", Carrera.class)
 				.setParameter("nombre", nombreCarrera)
 				.getResultList();
-
+		em.close();
 		if (listado.size() == 0) {
 			return null;
 		} else {
@@ -163,14 +158,13 @@ public class CarreraJPARepository  implements GenericRepository<Carrera, Integer
 	/** Este metodo obtiene las carreras ordenadas por cantidad de estudiantes sin distinguir entre los recibidos y no recibidos. Cantidad estudiantes totales
 	 * @return listado listado de carreras ordenadad por estudiantes*/
 	public List<Carrera> getCarrerasOrdCantEstudiantes(){
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		Query q = em.createNativeQuery("select c.* from Carrera c \r\n" + 
 				"inner join Matricula m ON c.id = m.id_carrera\r\n" + 
 				"group by c.id\r\n" + 
 				"order by count(m.id_estudiante) desc ", Carrera.class);
 		List<Carrera> listado = q.getResultList();
-
-
+		em.close();
 		return listado;
 	}
 	

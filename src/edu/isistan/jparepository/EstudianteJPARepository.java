@@ -1,16 +1,9 @@
 package edu.isistan.jparepository;
 
-import java.io.Serializable;
-import java.nio.channels.spi.AbstractSelectableChannel;
 import java.util.List;
-
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
-
 import edu.isistan.entidad.Estudiante;
-import edu.isistan.entidad.Matricula;
 
 /**
  * @author Belen Enemark
@@ -18,13 +11,11 @@ import edu.isistan.entidad.Matricula;
  * @author Mateo Zarrabeitia
  * Esta clase se ocupa  de insertar, actualizar y eliminar estudiante*/
 public class EstudianteJPARepository implements GenericRepository<Estudiante, Integer> {
-	/**{@value #emf } emf creacion del entity manager para el controller*/
-	private EntityManagerFactory emf = null;
+	
 	private static EstudianteJPARepository estudiante;
 
 	/**Crea el constructor */
 	public EstudianteJPARepository() {
-		this.emf = Persistence.createEntityManagerFactory("Example");
 	}
 	
 	public static EstudianteJPARepository getInstance() {
@@ -42,7 +33,7 @@ public class EstudianteJPARepository implements GenericRepository<Estudiante, In
 	public Estudiante insert(Estudiante estudiante) {
 		EntityManager em = null;
 		try {
-			em = emf.createEntityManager();
+			em = EMF.createEntityManager();
 			Estudiante estudianteaux = this.getEstudianteDNI(estudiante.getDni()); 
 			if (estudianteaux!= null ) {
 				System.out.println("El estudiante con el DNI: "+estudiante.getDni()+" ya se encuentra registrado");
@@ -76,7 +67,7 @@ public class EstudianteJPARepository implements GenericRepository<Estudiante, In
 	public void update(Estudiante estudiante) {
 		EntityManager em = null;
 		try {
-			em = emf.createEntityManager();
+			em = EMF.createEntityManager();
 			em.getTransaction().begin();
 			estudiante = em.merge(estudiante);
 			em.getTransaction().commit();
@@ -98,7 +89,7 @@ public class EstudianteJPARepository implements GenericRepository<Estudiante, In
 	public void delete(Integer lu) {
 		EntityManager em = null;
 		try {
-			em = emf.createEntityManager();
+			em = EMF.createEntityManager();
 			em.getTransaction().begin();
 
 			Estudiante estudiante = null;
@@ -122,7 +113,7 @@ public class EstudianteJPARepository implements GenericRepository<Estudiante, In
 	 * @return listado de todos los estudiantes*/
 	@Override
 	public List<Estudiante> getALL() {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		List<Estudiante> listado = em.createQuery("SELECT E FROM Estudiante E", Estudiante.class)
 				.getResultList();
 
@@ -137,7 +128,7 @@ public class EstudianteJPARepository implements GenericRepository<Estudiante, In
 	 * @return em.find, retorna un estudiante encontrado por libreta universitaria*/
 	@Override
 	public Estudiante getId(Integer lu) {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		try {
 			return em.find(Estudiante.class, lu);
 		} finally {
@@ -148,11 +139,11 @@ public class EstudianteJPARepository implements GenericRepository<Estudiante, In
 	 * @param dni documento nacional de identidad
 	 * @return listado.get(0) un estudiante con dni */
 	public Estudiante getEstudianteDNI(int dni) {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		List<Estudiante> listado = em.createQuery("SELECT E FROM Estudiante E WHERE E.dni =:dni ", Estudiante.class)
 				.setParameter("dni", dni)
 				.getResultList();
-
+		em.close();
 		if (listado.size() == 0) {
 			return null;
 		} else {
@@ -165,10 +156,10 @@ public class EstudianteJPARepository implements GenericRepository<Estudiante, In
 	 * @return listado listado estudiantes ordenado por apellido*/
 	public List<Estudiante> getEstudiantesOrdenados(String criterio) {
 		if (criterio.equalsIgnoreCase("ASC") || criterio.equalsIgnoreCase("DESC")) {
-			EntityManager em = emf.createEntityManager();
+			EntityManager em = EMF.createEntityManager();
 			List<Estudiante> listado = em.createQuery("SELECT E FROM Estudiante E ORDER BY E.apellido " + criterio, Estudiante.class)
 					.getResultList();
-
+			em.close();
 			return listado;
 		}
 		return null;
@@ -176,10 +167,11 @@ public class EstudianteJPARepository implements GenericRepository<Estudiante, In
 	/** Obtiene el ultimo id del estudiante cargado
 	 * @return ultimoLUEstudiante el ultimo id del estudiante dado de alta*/
 	public Integer getLUUltimoEstudiante() {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		List<Estudiante> ultimoEstudiante = (List<Estudiante>) em.createQuery("SELECT E FROM Estudiante E ORDER BY E.lu DESC", Estudiante.class)
 				.setMaxResults(1)
 				.getResultList();
+		em.close();
 		if (ultimoEstudiante.size() == 0) {
 			return 0;
 		} else {
@@ -191,10 +183,11 @@ public class EstudianteJPARepository implements GenericRepository<Estudiante, In
 	 * @return listado estudiantes ordenados por genero*/
 	public List<Estudiante> getEstudiantesGenero(String genero) {
 		if (genero.equalsIgnoreCase("F") || genero.equalsIgnoreCase("M")) {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		List<Estudiante> listado = em.createQuery("SELECT E FROM Estudiante E WHERE E.genero =:genero ", Estudiante.class)
 				.setParameter("genero", genero)
 				.getResultList();
+		em.close();
 		return listado;
 		}
 		return null;
@@ -204,7 +197,7 @@ public class EstudianteJPARepository implements GenericRepository<Estudiante, In
 	 * @param ciudad ciudad en la que vive
 	 * @return listado estudiantes por genero*/
 	public List<Estudiante> getEstudiantesCarreraCiudad(String carrera,String ciudad) {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		Query q = em.createNativeQuery("select e.* from Estudiante e \r\n" + 
 				"join Matricula m ON m.id_estudiante = e.lu\r\n" + 
 				"join Carrera c ON m.id_carrera = c.id\r\n" + 
@@ -212,8 +205,7 @@ public class EstudianteJPARepository implements GenericRepository<Estudiante, In
 				.setParameter("carrera", carrera).
 				setParameter("ciudad", ciudad);
 		List<Estudiante> listado = q.getResultList();
-
-
+		em.close();
 		return listado;
 	}
 

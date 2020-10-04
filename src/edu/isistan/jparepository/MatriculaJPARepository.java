@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import edu.isistan.dto.DTOReporteInscriptos;
@@ -20,12 +18,10 @@ import edu.isistan.entidad.Matricula;
 public class MatriculaJPARepository implements Serializable, GenericRepository<Matricula, Object> {
 
 	private static final long serialVersionUID = -6284052128342094661L;
-	private EntityManagerFactory emf = null;
 	private static MatriculaJPARepository matricula;
 
 	/** Constructor que levanta el entity manager factory*/
 	public MatriculaJPARepository() {
-		this.emf = Persistence.createEntityManagerFactory("Example");
 	}
 	
 	public static MatriculaJPARepository getInstance() {
@@ -43,7 +39,7 @@ public class MatriculaJPARepository implements Serializable, GenericRepository<M
 	public Matricula insert(Matricula matricula) {
 		EntityManager em = null;
 		try {
-			em = emf.createEntityManager();
+			em = EMF.createEntityManager();
 			if(this.getMatricula(matricula.getCarrera(), matricula.getEstudiante()) != null) {
 				System.out.println("El alumno ya se encuentra matriculado en la carrera");
 				return null;
@@ -68,7 +64,7 @@ public class MatriculaJPARepository implements Serializable, GenericRepository<M
 	public void update(Matricula matricula) {
 		EntityManager em = null;
 		try {
-			em = emf.createEntityManager();
+			em = EMF.createEntityManager();
 			em.getTransaction().begin();
 			matricula = em.merge(matricula);
 			em.getTransaction().commit();
@@ -86,7 +82,7 @@ public class MatriculaJPARepository implements Serializable, GenericRepository<M
 	public void delete(Object matricula) {
 		EntityManager em = null;
 		try {
-			em = emf.createEntityManager();
+			em = EMF.createEntityManager();
 			em.getTransaction().begin();
 			em.remove(matricula);
 			em.getTransaction().commit(); 
@@ -99,21 +95,21 @@ public class MatriculaJPARepository implements Serializable, GenericRepository<M
 	
 	@Override
 	public List<Matricula> getALL() {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		List<Matricula> listado = em.createQuery("SELECT M FROM Matricula M", Matricula.class)
 				.getResultList();
-
+		em.close();
 		return listado;
 	}
 	@Override
 	public Matricula getId(Object id) {
 		String[] tokens = ((String) id).split("/");
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		List<Matricula> matricula = em.createQuery("SELECT M FROM Matricula M WHERE M.estudiante.lu =:ides AND M.carrera.id =:idca", Matricula.class)
 				.setParameter("ides", Integer.valueOf(tokens[0]))
 				.setParameter("idca", Integer.valueOf(tokens[1]))
 				.getResultList();
-
+		em.close();
 		return matricula.get(0);
 	}
 	
@@ -123,12 +119,12 @@ public class MatriculaJPARepository implements Serializable, GenericRepository<M
 	 * @param idEstudiante identificador de estudiante de la tabla estudiante
 	 * @return listado.get(0) retorna el listado en la posicion 0*/
 	public Matricula getMatricula(Carrera idCarrera, Estudiante idEstudiante) {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		Query q = em.createNativeQuery("SELECT * FROM Matricula M WHERE M.id_estudiante =:es AND M.id_carrera =:ca ", Matricula.class)
 				.setParameter("es", idEstudiante).
 				setParameter("ca", idCarrera);
 		List<Matricula> listado = q.getResultList();
-
+		em.close();
 		if (listado.size() == 0) {
 			return null;
 		} else {
@@ -141,7 +137,7 @@ public class MatriculaJPARepository implements Serializable, GenericRepository<M
 	 * @return listado listado con los datos del cruce entre inscriptos, egresados, año y carrera. 
 	 * */
 	public List<DTOReporteInscriptos> getReporte() {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		Query q = em.createNativeQuery("(SELECT row_number() OVER () as \"id\",\r\n" + 
 				"c.nombre_carrera AS \"nombreCarrera\",\r\n" + 
 				"SUM(if(m.graduado = '1', 0, 0)) AS \"cantInscriptos\", \r\n" + 
@@ -163,6 +159,7 @@ public class MatriculaJPARepository implements Serializable, GenericRepository<M
 				"GROUP BY extract(year from m.fecha_inscripcion), c.id\r\n" + 
 				"ORDER BY c.nombre_carrera ASC, extract(year from m.fecha_inscripcion) ASC) \r\n" + 
 				"ORDER BY nombreCarrera ASC, anio ASC", "DTOReporteInscriptos");
+		em.close();
 		List<DTOReporteInscriptos> listado = q.getResultList();
 		return listado;
 	}
