@@ -51,7 +51,7 @@ function crearContenidoEstudiantes() {
     let labelGenero = document.createElement("span");
     labelGenero.innerHTML = "Genero: ";
     campoGenero.setAttribute('id', 'generoEstudiante');
-    campoCiudad_residencia.setAttribute('value', '');
+    campoGenero.setAttribute('value', '');
     let optionF = document.createElement("option");
     optionF.text = "F";
     campoGenero.add(optionF);
@@ -76,6 +76,60 @@ function crearContenidoEstudiantes() {
     botonGet.textContent = 'listar estudiantes';
     formHTML.appendChild(botonGet);
 
+    let labelOrden = document.createElement("span");
+    let campoOrdenBusqueda = document.createElement("select");
+    labelOrden.innerHTML = "orden: ";
+    campoOrdenBusqueda.setAttribute('id', 'ordenBusqueda');
+    campoOrdenBusqueda.setAttribute('value', '');
+    let optionASC = document.createElement("option");
+    optionASC.text = "ASC";
+    campoOrdenBusqueda.add(optionASC);
+    let optionDESC = document.createElement("option");
+    optionDESC.text = "DESC";
+    campoOrdenBusqueda.add(optionDESC);
+    formHTML.appendChild(labelOrden);
+    formHTML.appendChild(campoOrdenBusqueda);
+    let botonGetApellido = document.createElement("button");
+    botonGetApellido.setAttribute('class', 'btn-primary');
+    botonGetApellido.setAttribute('id', 'getEstudiantesApellido');
+    botonGetApellido.addEventListener("click", getEstudiantesApellido);
+    botonGetApellido.textContent = 'ordenar estudiantes por apellido';
+    formHTML.appendChild(botonGetApellido);
+
+    let campoLUBusqueda = document.createElement("input");
+    let labelLU = document.createElement("span");
+    labelLU.innerHTML = "LU: ";
+    campoLUBusqueda.setAttribute('value', '');
+    campoLUBusqueda.setAttribute('id', 'luEstudianteBusqueda');
+    campoLUBusqueda.setAttribute('type', 'number');
+    formHTML.appendChild(labelLU);
+    formHTML.appendChild(campoLUBusqueda);
+    let botonGetLU = document.createElement("button");
+    botonGetLU.setAttribute('class', 'btn-primary');
+    botonGetLU.setAttribute('id', 'getEstudianteLU');
+    botonGetLU.addEventListener("click", getEstudianteLU);
+    botonGetLU.textContent = 'un estudiante por LU';
+    formHTML.appendChild(botonGetLU);
+
+    let campoGeneroBusqueda = document.createElement("select");
+    let labelGeneroBusqueda = document.createElement("span");
+    labelGeneroBusqueda.innerHTML = "Genero busqueda: ";
+    campoGeneroBusqueda.setAttribute('id', 'generoEstudianteBusqueda');
+    campoGeneroBusqueda.setAttribute('value', '');
+    let optionFBusqueda = document.createElement("option");
+    optionFBusqueda.text = "F";
+    campoGeneroBusqueda.add(optionFBusqueda);
+    let optionMBusqueda = document.createElement("option");
+    optionMBusqueda.text = "M";
+    campoGeneroBusqueda.add(optionMBusqueda);
+    formHTML.appendChild(labelGeneroBusqueda);
+    formHTML.appendChild(campoGeneroBusqueda);
+    let botonGetGenero = document.createElement("button");
+    botonGetGenero.setAttribute('class', 'btn-primary');
+    botonGetGenero.setAttribute('id', 'getEstudianteGenero');
+    botonGetGenero.addEventListener("click", getEstudianteGenero);
+    botonGetGenero.textContent = 'estudiantes por genero';
+    formHTML.appendChild(botonGetGenero);
 
     let colThead = document.createElement("thead");
     let colTr = document.createElement("tr");
@@ -180,13 +234,55 @@ function getCarreras() {
 
 function getEstudiantes() {
     console.log("click EN BOTON GET ESTUDIANTES");
-    fetch('http://localhost:8080/Integrador3/rest/estudiantes')
+    let url = baseUrl + "rest/estudiantes";
+    fetch(url)
     .then(res => res.json())
     .then(datos => {
         // console.log(datos)
         setTablaEstudiantes(datos)
     })
 }
+
+function getEstudiantesApellido() {
+    console.log("click EN BOTON GET ESTUDIANTES");
+    let orden = document.querySelector("#ordenBusqueda").value;
+    let url = baseUrl + "rest/estudiantes/orden/" + orden;
+    fetch(url)
+    .then(res => res.json())
+    .then(datos => {
+        // console.log(datos)
+        setTablaEstudiantes(datos)
+    })
+}
+
+function getEstudianteLU() {
+    console.log("click EN BOTON GET ESTUDIANTES");
+    let LU = document.querySelector("#luEstudianteBusqueda").value;
+    let url = baseUrl + "rest/estudiantes/" + LU;
+    console.log(url);
+    fetch(url)
+    .then(res => res.json())
+    .then(datos => {
+        // console.log(datos)
+        let arrDatos = [];
+        arrDatos.push(datos);
+        setTablaEstudiantes(arrDatos)
+    })
+}
+
+function getEstudianteGenero() {
+    console.log("click EN BOTON GET ESTUDIANTES");
+    let generoBusqueda = document.querySelector("#generoEstudianteBusqueda").value;
+    let url = baseUrl + "rest/estudiantes/genero/" + generoBusqueda;
+    console.log(url);
+    fetch(url)
+    .then(res => res.json())
+    .then(datos => {
+        // console.log(datos)
+        setTablaEstudiantes(datos)
+    })
+}
+
 
 function addCarrera() {
     console.log("click EN BOTON ADD CARRERAS");
