@@ -12,6 +12,7 @@ formHTML = document.querySelector("#form");
 tableHTML = document.querySelector("#table");
 
 
+//crea el formulario y el thead de estudiantes
 function crearContenidoEstudiantes() {
     formHTML.innerHTML = '';
 
@@ -194,6 +195,7 @@ function crearContenidoEstudiantes() {
     tableHTML.appendChild(colTbody);
 }
 
+//crea el formulario y el thead de carreras
 function crearContenidoCarreras() {
     formHTML.innerHTML = '';
 
@@ -223,7 +225,6 @@ function crearContenidoCarreras() {
     botonGetPorEstudiantes.textContent = 'carreras ordenadas por estudiantes';
     formHTML.appendChild(botonGetPorEstudiantes);
 
-    console.log("CLICK");
     let colThead = document.createElement("thead");
     let colTr = document.createElement("tr");
     let colThID = document.createElement("th");
@@ -244,6 +245,7 @@ function crearContenidoCarreras() {
     tableHTML.appendChild(colTbody);
 }
 
+//crea el formulario y el thead de matriculas
 function crearContenidoRelaciones() {
     formHTML.innerHTML = '';
 
@@ -340,116 +342,105 @@ function crearContenidoRelaciones() {
     tableHTML.appendChild(colTbody);
 }
 
+//pedido REST para obtener las carreras
 function getCarreras() {
-    console.log("click EN BOTON GET CARRERAS");
-    fetch('http://localhost:8080/Integrador3/rest/carreras')
+    let url = baseUrl + "rest/carreras";
+    fetch(url)
     .then(res => res.json())
     .then(datos => {
-        // console.log(datos)
         setTablaCarreras(datos)
     })
 }
 
+//2F pedido REST para obtener las carreras ordenadas por cantidad de estudiantes inscriptos
 function getCarrerasOrdenEstudiantes() {
-    console.log("click EN BOTON GET CARRERAS ORDENADAS POR ESTUDIANTES");
-    fetch('http://localhost:8080/Integrador3/rest/carreras/orden/cantincriptos')
+    let url = baseUrl + "rest/carreras/orden/cantincriptos";
+    fetch(url)
     .then(res => res.json())
     .then(datos => {
-        // console.log(datos)
         setTablaCarreras(datos)
     })
 }
 
+//pedido REST para obtener los estudiantes
 function getEstudiantes() {
-    console.log("click EN BOTON GET ESTUDIANTES");
     let url = baseUrl + "rest/estudiantes";
     fetch(url)
     .then(res => res.json())
     .then(datos => {
-        // console.log(datos)
         setTablaEstudiantes(datos)
     })
 }
 
+//pedido REST para obtener las carreras y estudiantes relacionados
 function getMatriculas() {
-    console.log("click EN BOTON GET MATRICULAS");
     let url = baseUrl + "rest/matriculas";
     fetch(url)
     .then(res => res.json())
     .then(datos => {
-        // console.log(datos)
         setTablaMatriculas(datos)
     })
 }
 
+//2H pedido REST para obtener el reporte de carreras (inscriptos y egresados por año)
 function getReporte() {
-    console.log("click EN BOTON GET REPORTE");
     let url = baseUrl + "rest/matriculas/reporte";
-    console.log(url);
     fetch(url)
     .then(res => res.json())
     .then(datos => {
-        console.log(datos)
         setTablaMatriculas(datos)
     })
 }
 
+//2C pedido REST para obtener los estudiantes ordenados por apellido (ASC o DESC)
 function getEstudiantesApellido() {
-    console.log("click EN BOTON GET ESTUDIANTES");
     let orden = document.querySelector("#ordenBusqueda").value;
     let url = baseUrl + "rest/estudiantes/orden/" + orden;
     fetch(url)
     .then(res => res.json())
     .then(datos => {
-        // console.log(datos)
         setTablaEstudiantes(datos)
     })
 }
 
+//2D pedido REST para obtener un estudiante (dada su LU)
 function getEstudianteLU() {
-    console.log("click EN BOTON GET ESTUDIANTES");
     let LU = document.querySelector("#luEstudianteBusqueda").value;
     let url = baseUrl + "rest/estudiantes/" + LU;
-    console.log(url);
     fetch(url)
     .then(res => res.json())
     .then(datos => {
-        // console.log(datos)
         let arrDatos = [];
         arrDatos.push(datos);
         setTablaEstudiantes(arrDatos)
     })
 }
 
+//2E pedido REST para obtener los estudiantes de determinado genero
 function getEstudianteGenero() {
-    console.log("click EN BOTON GET ESTUDIANTES");
     let generoBusqueda = document.querySelector("#generoEstudianteBusqueda").value;
     let url = baseUrl + "rest/estudiantes/genero/" + generoBusqueda;
-    console.log(url);
     fetch(url)
     .then(res => res.json())
     .then(datos => {
-        // console.log(datos)
         setTablaEstudiantes(datos)
     })
 }
 
+//2G pedido REST para obtener los estudiantes de una carrera y ciudad
 function getEstudiantesCarreraCiudad() {
-    console.log("click EN BOTON GET ESTUDIANTES DE CARRERA Y CIUDAD");
     let carreraBusqueda = document.querySelector("#carreraEstudianteBusqueda").value;
     let ciudadBusqueda = document.querySelector("#ciudadEstudianteBusqueda").value;
     let url = baseUrl + "rest/estudiantes/carrera/" + carreraBusqueda + "/ciudad/" + ciudadBusqueda;
-    console.log(url);
     fetch(url)
     .then(res => res.json())
     .then(datos => {
-        // console.log(datos)
         setTablaEstudiantes(datos)
     })
 }
 
+//pedido REST para agregar una carrera (campos: nombre)
 function addCarrera() {
-    console.log("click EN BOTON ADD CARRERAS");
     let nombreCarrera = document.querySelector("#nombreCarrera").value;
     let objeto = {
         'nombre_carrera': nombreCarrera
@@ -463,7 +454,6 @@ function addCarrera() {
         "body": JSON.stringify(objeto)
     })
         .then(function(r){
-            console.log("POST status: " + r.status);
             let resultado = document.querySelector("#resultado");
             resultado.innerHTML = "POST Carrera status: " + r.status;
             if (r.status === 204) {
@@ -481,8 +471,8 @@ function addCarrera() {
     })
 }
 
+//2A pedido REST para agregar un estudiante (campos: nombre, apellido, edad, dni, genero, ciudad)
 function addEstudiante() {
-    console.log("click EN BOTON ADD ESTUDIANTE");
     let nombreEstudiante = document.querySelector("#nombreEstudiante").value;
     let apellidoEstudiante = document.querySelector("#apellidoEstudiante").value;
     let edadEstudiante = document.querySelector("#edadEstudiante").value;
@@ -507,7 +497,6 @@ function addEstudiante() {
         "body": JSON.stringify(objeto)
     })
         .then(function(r){
-            console.log("POST status: " + r.status);
             let resultado = document.querySelector("#resultado");
             resultado.innerHTML = "POST Estudiante status: " + r.status;
             if (r.status === 204) {
@@ -524,8 +513,8 @@ function addEstudiante() {
     })
 }
 
+//2B pedido REST para matricular un alumno en una carrera (campos: LU, id_carrera, fecha_ingreso, fecha_egreso, y si se graduo)
 function addMatricula() {
-    console.log("click EN BOTON ADD MATRICULA");
     let LUMatricula = document.querySelector("#LUMatricula").value;
     let idCarreraMatricula = document.querySelector("#idCarreraMatricula").value;
     let fechaIngresoMatricula = document.querySelector("#fechaIngresoMatricula").value;
@@ -544,8 +533,6 @@ function addMatricula() {
     }
 
     let url = baseUrl + "rest/matriculas"
-    console.log(url);
-    console.log(objeto);
     fetch(url, {
         "method": 'POST',
         "headers": {
@@ -554,7 +541,6 @@ function addMatricula() {
         "body": JSON.stringify(objeto)
     })
         .then(function(r){
-            console.log("POST status: " + r.status);
             let resultado = document.querySelector("#resultado");
             resultado.innerHTML = "POST matricula status: " + r.status;
             if (r.status === 204) {
@@ -571,8 +557,8 @@ function addMatricula() {
     })
 }
 
+//incorpora el resultado de la consulta a una tabla de carreras
 function setTablaCarreras(datos) {
-    console.log(datos);
     let colTr;
     let colTdId;
     let contenidoId;
@@ -594,8 +580,8 @@ function setTablaCarreras(datos) {
     }
 }
 
+//incorpora el resultado de la consulta a una tabla de matriculas
 function setTablaMatriculas(datos) {
-    console.log(datos);
     let colTr;
     let colTdCarreraMatricula;
     let contenidoCarreraMatricula;
@@ -648,8 +634,8 @@ function setTablaMatriculas(datos) {
     }
 }
 
+//incorpora el resultado de la consulta a una tabla de estudiantes
 function setTablaEstudiantes(datos) {
-    console.log(datos);
     let colTr;
     let colTdId;
     let contenidoId;

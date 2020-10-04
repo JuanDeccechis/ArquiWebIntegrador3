@@ -159,8 +159,8 @@ public class MatriculaJPARepository implements Serializable, GenericRepository<M
 				"GROUP BY extract(year from m.fecha_inscripcion), c.id\r\n" + 
 				"ORDER BY c.nombre_carrera ASC, extract(year from m.fecha_inscripcion) ASC) \r\n" + 
 				"ORDER BY nombreCarrera ASC, anio ASC", "DTOReporteInscriptos");
-		em.close();
 		List<DTOReporteInscriptos> listado = q.getResultList();
+		em.close();
 		return listado;
 	}
 	
