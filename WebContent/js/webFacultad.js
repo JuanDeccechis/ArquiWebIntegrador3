@@ -216,6 +216,13 @@ function crearContenidoCarreras() {
     botonGet.textContent = 'listar carreras';
     formHTML.appendChild(botonGet);
 
+    let botonGetPorEstudiantes = document.createElement("button");
+    botonGetPorEstudiantes.setAttribute('class', 'btn-primary');
+    botonGetPorEstudiantes.setAttribute('id', 'getCarrerasOrdenEstudiantes');
+    botonGetPorEstudiantes.addEventListener("click", getCarrerasOrdenEstudiantes);
+    botonGetPorEstudiantes.textContent = 'carreras ordenadas por estudiantes';
+    formHTML.appendChild(botonGetPorEstudiantes);
+
     console.log("CLICK");
     let colThead = document.createElement("thead");
     let colTr = document.createElement("tr");
@@ -287,6 +294,13 @@ function crearContenidoRelaciones() {
     botonGet.textContent = 'listar matriculas';
     formHTML.appendChild(botonGet);
 
+    let botonGetReporte = document.createElement("button");
+    botonGetReporte.setAttribute('class', 'btn-primary');
+    botonGetReporte.setAttribute('id', 'getReporte');
+    botonGetReporte.addEventListener("click", getReporte);
+    botonGetReporte.textContent = 'generar reporte';
+    formHTML.appendChild(botonGetReporte);
+
     let colThead = document.createElement("thead");
     let colTr = document.createElement("tr");
     let colThCarreraMatricula = document.createElement("th");
@@ -336,6 +350,16 @@ function getCarreras() {
     })
 }
 
+function getCarrerasOrdenEstudiantes() {
+    console.log("click EN BOTON GET CARRERAS ORDENADAS POR ESTUDIANTES");
+    fetch('http://localhost:8080/Integrador3/rest/carreras/orden/cantincriptos')
+    .then(res => res.json())
+    .then(datos => {
+        // console.log(datos)
+        setTablaCarreras(datos)
+    })
+}
+
 function getEstudiantes() {
     console.log("click EN BOTON GET ESTUDIANTES");
     let url = baseUrl + "rest/estudiantes";
@@ -354,6 +378,18 @@ function getMatriculas() {
     .then(res => res.json())
     .then(datos => {
         // console.log(datos)
+        setTablaMatriculas(datos)
+    })
+}
+
+function getReporte() {
+    console.log("click EN BOTON GET REPORTE");
+    let url = baseUrl + "rest/matriculas/reporte";
+    console.log(url);
+    fetch(url)
+    .then(res => res.json())
+    .then(datos => {
+        console.log(datos)
         setTablaMatriculas(datos)
     })
 }
