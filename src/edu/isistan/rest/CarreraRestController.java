@@ -34,13 +34,7 @@ public class CarreraRestController {
 	public List<Carrera> getAllCarrerarOrdInscriptos() {
 		return CarreraJPARepository.getInstance().getCarrerasOrdCantEstudiantes();
 	}
-	
-	@GET
-	@Path("/reporte")
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<DTOReporteInscriptos> getCarrrerasReporte() {
-		return MatriculaJPARepository.getInstance().getReporte();
-	}
+
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)

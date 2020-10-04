@@ -2,6 +2,7 @@ package edu.isistan.entidad;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -11,6 +12,10 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 /**
  * @author Belen Enemark
  * @author Juan Deccechis
@@ -32,12 +37,16 @@ public class Matricula implements Serializable{
 	private Carrera carrera;
 	
 
+	 
+	@Column (nullable=false, columnDefinition="DATETIME")
+	@Temporal(TemporalType.DATE)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	private Date fecha_inscripcion;
 	
-	@Column (nullable=false)
-	private Timestamp fecha_inscripcion;
-	
-	@Column (nullable=true)
-	private Timestamp fecha_egreso;
+	@Column (nullable=true, columnDefinition="DATETIME")
+	@Temporal(TemporalType.DATE)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	private Date fecha_egreso;
 	
 	@Column (nullable=false, name="graduado")
 	private boolean isGraduado;
@@ -105,7 +114,7 @@ public class Matricula implements Serializable{
 
 	/**Obtiene fecha de inscripcion 
 	 * @return devuelve la fecha de inscripcion del alumno*/
-	public Timestamp getFecha_inscripcion() {
+	public Date getFecha_inscripcion() {
 		return fecha_inscripcion;
 	}
 
@@ -125,7 +134,7 @@ public class Matricula implements Serializable{
 	}
 
 
-	public Timestamp getFecha_egreso() {
+	public Date getFecha_egreso() {
 		return fecha_egreso;
 	}
 

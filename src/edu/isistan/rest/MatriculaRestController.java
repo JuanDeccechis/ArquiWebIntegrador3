@@ -10,6 +10,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import edu.isistan.dto.DTOReporteInscriptos;
 import edu.isistan.entidad.Matricula;
 import edu.isistan.jparepository.MatriculaJPARepository;
 
@@ -31,6 +33,13 @@ public class MatriculaRestController {
 		Integer idEstudiante = Integer.valueOf(msg);
 		Integer idCarrera = Integer.valueOf(msg2);
 		return MatriculaJPARepository.getInstance().getId(idCarrera+"/"+idEstudiante);
+	}
+	
+	@GET
+	@Path("/reporte")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<DTOReporteInscriptos> getMatriculaReporte() {
+		return MatriculaJPARepository.getInstance().getReporte();
 	}
 	
 	@POST

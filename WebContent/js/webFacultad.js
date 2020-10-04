@@ -21,7 +21,7 @@ function crearContenidoEstudiantes() {
     let campoGenero = document.createElement("select");
     let campoEdad = document.createElement("input");
     let campoCiudad_residencia = document.createElement("input");
-    
+
     campoNombre.setAttribute('id', 'nombreEstudiante');
     campoNombre.setAttribute('value', '');
     campoNombre.setAttribute('placeHolder', 'nombre estudiante');
@@ -157,7 +157,7 @@ function crearContenidoEstudiantes() {
     contenido = document.createTextNode("Genero");
     colThGenero.appendChild(contenido);
     colTr.appendChild(colThGenero);
-    
+
     let colThDNI = document.createElement("th");
     contenido = document.createTextNode("DNI");
     colThDNI.appendChild(contenido);
@@ -540,11 +540,11 @@ function setTablaMatriculas(datos) {
     for (let index = 0; index < datos.length; index++) {
         colTr = document.createElement("tr");
         colTdCarreraMatricula = document.createElement("td");
-        contenidoCarreraMatricula = document.createTextNode(datos[index].carrera.id);
+        contenidoCarreraMatricula = document.createTextNode(datos[index].carrera.nombre_carrera);
         colTdCarreraMatricula.appendChild(contenidoCarreraMatricula);
         colTr.appendChild(colTdCarreraMatricula);
         colTdEstudianteMatricula = document.createElement("td");
-        contenidoEstudianteMatricula = document.createTextNode(datos[index].estudiante.lu);
+        contenidoEstudianteMatricula = document.createTextNode("["+datos[index].estudiante.lu+"] - "+datos[index].estudiante.nombre+" "+datos[index].estudiante.apellido);
         colTdEstudianteMatricula.appendChild(contenidoEstudianteMatricula);
         colTr.appendChild(colTdEstudianteMatricula);
         colTdIngresoMatricula = document.createElement("td");
@@ -552,13 +552,26 @@ function setTablaMatriculas(datos) {
         colTdIngresoMatricula.appendChild(contenidoIngresoMatricula);
         colTr.appendChild(colTdIngresoMatricula);
         colTdEgresoMatricula = document.createElement("td");
-        contenidoEgresoMatricula = document.createTextNode(datos[index].fecha_egreso);
-        colTdEgresoMatricula.appendChild(contenidoEgresoMatricula);
-        colTr.appendChild(colTdEgresoMatricula);
+        if (datos[index].fecha_egreso == null) {
+          contenidoEgresoMatricula = document.createTextNode("-");
+          colTdEgresoMatricula.appendChild(contenidoEgresoMatricula);
+          colTr.appendChild(colTdEgresoMatricula);
+        } else {
+          contenidoEgresoMatricula = document.createTextNode(datos[index].fecha_egreso);
+          colTdEgresoMatricula.appendChild(contenidoEgresoMatricula);
+          colTr.appendChild(colTdEgresoMatricula);
+        }
         colTdGraduadoMatricula = document.createElement("td");
-        contenidoGraduadoMatricula = document.createTextNode(datos[index].graduado);
-        colTdGraduadoMatricula.appendChild(contenidoGraduadoMatricula);
-        colTr.appendChild(colTdGraduadoMatricula);
+        if (datos[index].graduado == false) {
+          contenidoGraduadoMatricula = document.createTextNode("NO");
+          colTdGraduadoMatricula.appendChild(contenidoGraduadoMatricula);
+          colTr.appendChild(colTdGraduadoMatricula);
+        } else {
+          contenidoGraduadoMatricula = document.createTextNode("SI");
+          colTdGraduadoMatricula.appendChild(contenidoGraduadoMatricula);
+          colTr.appendChild(colTdGraduadoMatricula);
+        }
+
         tbody.appendChild(colTr);
     }
 }
@@ -570,7 +583,7 @@ function setTablaEstudiantes(datos) {
     let contenidoId;
     let colTdNombre;
     let contenidoNombre;
-    
+
     let colTdApellido;
     let contenidoApellido;
     let colTdEdad;
@@ -593,28 +606,28 @@ function setTablaEstudiantes(datos) {
         contenidoNombre = document.createTextNode(datos[index].nombre);
         colTdNombre.appendChild(contenidoNombre);
         colTr.appendChild(colTdNombre);
-        
-        
+
+
         colTdApellido = document.createElement("td");
         contenidoApellido = document.createTextNode(datos[index].apellido);
         colTdApellido.appendChild(contenidoApellido);
         colTr.appendChild(colTdApellido);
-        
+
         colTdEdad = document.createElement("td");
         contenidoEdad = document.createTextNode(datos[index].edad);
         colTdEdad.appendChild(contenidoEdad);
         colTr.appendChild(colTdEdad);
-        
+
         colTdGenero = document.createElement("td");
         contenidoGenero = document.createTextNode(datos[index].genero);
         colTdGenero.appendChild(contenidoGenero);
         colTr.appendChild(colTdGenero);
-        
+
         colTdDni = document.createElement("td");
         contenidoDni = document.createTextNode(datos[index].dni);
         colTdDni.appendChild(contenidoDni);
         colTr.appendChild(colTdDni);
-        
+
         colTdCiudad = document.createElement("td");
         contenidoCiudad = document.createTextNode(datos[index].ciudad_residencia);
         colTdCiudad.appendChild(contenidoCiudad);
