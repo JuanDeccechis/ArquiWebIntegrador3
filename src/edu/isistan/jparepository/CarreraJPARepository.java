@@ -5,6 +5,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import edu.isistan.entidad.Carrera;
+import edu.isistan.entidad.Estudiante;
 /**
  * @author Belen Enemark
  * @author Juan Deccechis
@@ -27,6 +28,19 @@ public class CarreraJPARepository  implements GenericRepository<Carrera, Integer
 		return carrera;
 	}
 
+	/** Obtiene el ultimo id del estudiante cargado
+	 * @return ultimoLUEstudiante el ultimo id del estudiante dado de alta*/
+	public Integer getIdUltimaCarrera() {
+		EntityManager em = emf.createEntityManager();
+		List<Carrera> ultimaCarrera= (List<Carrera>) em.createQuery("SELECT C FROM Carrera C ORDER BY C.id DESC", Carrera.class)
+				.setMaxResults(1)
+				.getResultList();
+		if (ultimaCarrera.size() == 0) {
+			return 0;
+		} else {
+			return ultimaCarrera.get(0).getId();		
+		}
+	}
 	
 	/**Inserta la carrera en la base de datos 
 	 * @param carrera se carga el objeto que contiene los datos de la carrera*/
@@ -39,6 +53,7 @@ public class CarreraJPARepository  implements GenericRepository<Carrera, Integer
 				System.out.println("La carrera "+carrera.getNombre_carrera()+" ya se encuentra en la base de datos");
 				return null;
 			} else {
+				carrera.setId(this.getIdUltimaCarrera()+1);
 				em.getTransaction().begin();
 				em.persist(carrera);
 				em.getTransaction().commit();

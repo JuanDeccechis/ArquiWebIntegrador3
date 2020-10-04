@@ -167,7 +167,7 @@ public class EstudianteRestController {
 		estudiante.setLu(-1);
 		Estudiante result= EstudianteJPARepository.getInstance().insert(estudiante);
 		if(result==null) {
-			return Response.status(200).entity("El estudiante no se pudo crear").build();
+			return Response.status(204).entity("Ya existia un estudiante con ese DNI").build();
 		}else {
 			return Response.status(201).entity(estudiante).build();
 		}
