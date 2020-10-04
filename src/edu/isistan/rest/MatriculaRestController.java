@@ -39,7 +39,7 @@ public class MatriculaRestController {
 	public Response matricular(Matricula matricula) {
 		Matricula result= MatriculaJPARepository.getInstance().insert(matricula);
 		if(result==null) {
-			return Response.status(201).entity("El alumno ya se encuentra matriculado").build();
+			return Response.status(204).entity("El alumno ya se encuentra matriculado").build();
 		}else {
 			return Response.status(201).entity(matricula).build();
 		}

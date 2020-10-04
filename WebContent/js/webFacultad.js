@@ -219,7 +219,87 @@ function crearContenidoCarreras() {
 }
 
 function crearContenidoRelaciones() {
-    console.log("CLICK");
+    formHTML.innerHTML = '';
+
+    let campoLUMatricula = document.createElement("input");
+    let labelLUMatricula = document.createElement("span");
+    labelLUMatricula.innerHTML = "LU: ";
+    campoLUMatricula.setAttribute('id', 'LUMatricula');
+    campoLUMatricula.setAttribute('value', '');
+    campoLUMatricula.setAttribute('type', 'number');
+    formHTML.appendChild(labelLUMatricula);
+    formHTML.appendChild(campoLUMatricula);
+    let campoIDCarreraMatricula = document.createElement("input");
+    let labelIDCarreraMatricula = document.createElement("span");
+    labelIDCarreraMatricula.innerHTML = "id carrera: ";
+    campoIDCarreraMatricula.setAttribute('id', 'idCarreraMatricula');
+    campoIDCarreraMatricula.setAttribute('value', '');
+    campoIDCarreraMatricula.setAttribute('type', 'number');
+    formHTML.appendChild(labelIDCarreraMatricula);
+    formHTML.appendChild(campoIDCarreraMatricula);
+    let campoFechaIngresoMatricula = document.createElement("input");
+    let labelFechaIngresoMatricula = document.createElement("span");
+    labelFechaIngresoMatricula.innerHTML = "fecha ingreso: ";
+    campoFechaIngresoMatricula.setAttribute('id', 'fechaIngresoMatricula');
+    campoFechaIngresoMatricula.setAttribute('value', '');
+    campoFechaIngresoMatricula.setAttribute('type', 'date');
+    formHTML.appendChild(labelFechaIngresoMatricula);
+    formHTML.appendChild(campoFechaIngresoMatricula);
+    let campoFechaEgresoMatricula = document.createElement("input");
+    let labelFechaEgresoMatricula = document.createElement("span");
+    labelFechaEgresoMatricula.innerHTML = "fecha egreso: ";
+    campoFechaEgresoMatricula.setAttribute('id', 'fechaEgresoMatricula');
+    campoFechaEgresoMatricula.setAttribute('value', '');
+    campoFechaEgresoMatricula.setAttribute('type', 'date');
+    formHTML.appendChild(labelFechaEgresoMatricula);
+    formHTML.appendChild(campoFechaEgresoMatricula);
+
+    let botonPost = document.createElement("button");
+    botonPost.setAttribute('class', 'btn-primary');
+    botonPost.setAttribute('id', 'postMatricula');
+    botonPost.addEventListener("click", addMatricula);
+    botonPost.textContent = 'agregar matricula';
+    formHTML.appendChild(botonPost);
+
+    let botonGet = document.createElement("button");
+    botonGet.setAttribute('class', 'btn-primary');
+    botonGet.setAttribute('id', 'getMatriculas');
+    botonGet.addEventListener("click", getMatriculas);
+    botonGet.textContent = 'listar matriculas';
+    formHTML.appendChild(botonGet);
+
+    let colThead = document.createElement("thead");
+    let colTr = document.createElement("tr");
+    let colThCarreraMatricula = document.createElement("th");
+    let contenido = document.createTextNode("carrera");
+    colThCarreraMatricula.appendChild(contenido);
+    colTr.appendChild(colThCarreraMatricula);
+
+    let colThEstudianteMatricula = document.createElement("th");
+    contenido = document.createTextNode("estudiante");
+    colThEstudianteMatricula.appendChild(contenido);
+    colTr.appendChild(colThEstudianteMatricula);
+
+    let colThIngreso = document.createElement("th");
+    contenido = document.createTextNode("ingreso");
+    colThIngreso.appendChild(contenido);
+    colTr.appendChild(colThIngreso);
+
+    let colThEgreso = document.createElement("th");
+    contenido = document.createTextNode("egreso");
+    colThEgreso.appendChild(contenido);
+    colTr.appendChild(colThEgreso);
+
+    let colThGraduado = document.createElement("th");
+    contenido = document.createTextNode("graduado");
+    colThGraduado.appendChild(contenido);
+    colTr.appendChild(colThGraduado);
+
+    colThead.appendChild(colTr);
+    let colTbody = document.createElement("tbody");
+    tableHTML.innerHTML = '';
+    tableHTML.appendChild(colThead);
+    tableHTML.appendChild(colTbody);
 }
 
 function getCarreras() {
@@ -240,6 +320,17 @@ function getEstudiantes() {
     .then(datos => {
         // console.log(datos)
         setTablaEstudiantes(datos)
+    })
+}
+
+function getMatriculas() {
+    console.log("click EN BOTON GET MATRICULAS");
+    let url = baseUrl + "rest/matriculas";
+    fetch(url)
+    .then(res => res.json())
+    .then(datos => {
+        // console.log(datos)
+        setTablaMatriculas(datos)
     })
 }
 
@@ -360,6 +451,53 @@ function addEstudiante() {
     })
 }
 
+function addMatricula() {
+    console.log("click EN BOTON ADD MATRICULA");
+    let LUMatricula = document.querySelector("#LUMatricula").value;
+    let idCarreraMatricula = document.querySelector("#idCarreraMatricula").value;
+    let fechaIngresoMatricula = document.querySelector("#fechaIngresoMatricula").value;
+    let fechaEgresoMatricula = document.querySelector("#fechaEgresoMatricula").value;
+    let egresoMatricula = false;
+    if (fechaEgresoMatricula) {
+        egresoMatricula = true;
+    }
+
+    let objeto = {
+        'estudiante': parseInt(LUMatricula),
+        'carrera': parseInt(idCarreraMatricula),
+        'fecha_inscripcion': fechaIngresoMatricula,
+        'fecha_egreso': fechaEgresoMatricula,
+        'graduado': egresoMatricula
+    }
+
+    let url = baseUrl + "rest/matriculas"
+    console.log(url);
+    console.log(objeto);
+    fetch(url, {
+        "method": 'POST',
+        "headers": {
+            'Content-Type': 'application/json'
+        },
+        "body": JSON.stringify(objeto)
+    })
+        .then(function(r){
+            console.log("POST status: " + r.status);
+            let resultado = document.querySelector("#resultado");
+            resultado.innerHTML = "POST matricula status: " + r.status;
+            if (r.status === 204) {
+                resultado.innerHTML += " error";
+            } else {
+                getMatriculas();
+            }
+            setTimeout(function() {
+				resultado.innerHTML = '';
+				}, 3000);
+        })
+    .catch(function(error){
+        console.log("Error en CREATE: " + error);
+    })
+}
+
 function setTablaCarreras(datos) {
     console.log(datos);
     let colTr;
@@ -379,6 +517,48 @@ function setTablaCarreras(datos) {
         contenidoNombre = document.createTextNode(datos[index].nombre_carrera);
         colTdNombre.appendChild(contenidoNombre);
         colTr.appendChild(colTdNombre);
+        tbody.appendChild(colTr);
+    }
+}
+
+function setTablaMatriculas(datos) {
+    console.log(datos);
+    let colTr;
+    let colTdCarreraMatricula;
+    let contenidoCarreraMatricula;
+    let colTdEstudianteMatricula;
+    let contenidoEstudianteMatricula;
+    let colTdIngresoMatricula;
+    let contenidoIngresoMatricula;
+    let colTdEgresoMatricula;
+    let contenidoEgresoMatricula;
+    let colTdGraduadoMatricula;
+    let contenidoGraduadoMatricula;
+    let tbody = document.querySelector("tbody");
+    tbody.innerHTML = "";
+
+    for (let index = 0; index < datos.length; index++) {
+        colTr = document.createElement("tr");
+        colTdCarreraMatricula = document.createElement("td");
+        contenidoCarreraMatricula = document.createTextNode(datos[index].carrera.id);
+        colTdCarreraMatricula.appendChild(contenidoCarreraMatricula);
+        colTr.appendChild(colTdCarreraMatricula);
+        colTdEstudianteMatricula = document.createElement("td");
+        contenidoEstudianteMatricula = document.createTextNode(datos[index].estudiante.lu);
+        colTdEstudianteMatricula.appendChild(contenidoEstudianteMatricula);
+        colTr.appendChild(colTdEstudianteMatricula);
+        colTdIngresoMatricula = document.createElement("td");
+        contenidoIngresoMatricula = document.createTextNode(datos[index].fecha_inscripcion);
+        colTdIngresoMatricula.appendChild(contenidoIngresoMatricula);
+        colTr.appendChild(colTdIngresoMatricula);
+        colTdEgresoMatricula = document.createElement("td");
+        contenidoEgresoMatricula = document.createTextNode(datos[index].fecha_egreso);
+        colTdEgresoMatricula.appendChild(contenidoEgresoMatricula);
+        colTr.appendChild(colTdEgresoMatricula);
+        colTdGraduadoMatricula = document.createElement("td");
+        contenidoGraduadoMatricula = document.createTextNode(datos[index].graduado);
+        colTdGraduadoMatricula.appendChild(contenidoGraduadoMatricula);
+        colTr.appendChild(colTdGraduadoMatricula);
         tbody.appendChild(colTr);
     }
 }
