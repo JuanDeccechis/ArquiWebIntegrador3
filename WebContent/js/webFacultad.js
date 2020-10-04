@@ -21,7 +21,7 @@ function crearContenidoEstudiantes() {
     let campoGenero = document.createElement("select");
     let campoEdad = document.createElement("input");
     let campoCiudad_residencia = document.createElement("input");
-
+    
     campoNombre.setAttribute('id', 'nombreEstudiante');
     campoNombre.setAttribute('value', '');
     campoNombre.setAttribute('placeHolder', 'nombre estudiante');
@@ -131,6 +131,25 @@ function crearContenidoEstudiantes() {
     botonGetGenero.textContent = 'estudiantes por genero';
     formHTML.appendChild(botonGetGenero);
 
+    
+    let campoCarrera_Busqueda = document.createElement("input");
+    campoCarrera_Busqueda.setAttribute('id', 'carreraEstudianteBusqueda');
+    campoCarrera_Busqueda.setAttribute('value', '');
+    campoCarrera_Busqueda.setAttribute('placeHolder', 'carrera estudiante');
+    formHTML.appendChild(campoCarrera_Busqueda);
+    let campoCiudad_busqueda = document.createElement("input");
+    campoCiudad_busqueda.setAttribute('id', 'ciudadEstudianteBusqueda');
+    campoCiudad_busqueda.setAttribute('value', '');
+    campoCiudad_busqueda.setAttribute('placeHolder', 'ciudad estudiante');
+    formHTML.appendChild(campoCiudad_busqueda);
+
+    let botonGetCarreraCiudad = document.createElement("button");
+    botonGetCarreraCiudad.setAttribute('class', 'btn-primary');
+    botonGetCarreraCiudad.setAttribute('id', 'getEstudianteCarreraCiudad');
+    botonGetCarreraCiudad.addEventListener("click", getEstudiantesCarreraCiudad);
+    botonGetCarreraCiudad.textContent = 'estudiantes de una carrera y ciudad';
+    formHTML.appendChild(botonGetCarreraCiudad);
+
     let colThead = document.createElement("thead");
     let colTr = document.createElement("tr");
     let colThLU = document.createElement("th");
@@ -157,7 +176,7 @@ function crearContenidoEstudiantes() {
     contenido = document.createTextNode("Genero");
     colThGenero.appendChild(contenido);
     colTr.appendChild(colThGenero);
-
+    
     let colThDNI = document.createElement("th");
     contenido = document.createTextNode("DNI");
     colThDNI.appendChild(contenido);
@@ -275,10 +294,15 @@ function crearContenidoRelaciones() {
     colThCarreraMatricula.appendChild(contenido);
     colTr.appendChild(colThCarreraMatricula);
 
-    let colThEstudianteMatricula = document.createElement("th");
-    contenido = document.createTextNode("estudiante");
-    colThEstudianteMatricula.appendChild(contenido);
-    colTr.appendChild(colThEstudianteMatricula);
+    let colThLUEstudianteMatricula = document.createElement("th");
+    contenido = document.createTextNode("LU estudiante");
+    colThLUEstudianteMatricula.appendChild(contenido);
+    colTr.appendChild(colThLUEstudianteMatricula);
+    
+    let colThApellidoEstudianteMatricula = document.createElement("th");
+    contenido = document.createTextNode("apellido estudiante");
+    colThApellidoEstudianteMatricula.appendChild(contenido);
+    colTr.appendChild(colThApellidoEstudianteMatricula);
 
     let colThIngreso = document.createElement("th");
     contenido = document.createTextNode("ingreso");
@@ -374,6 +398,19 @@ function getEstudianteGenero() {
     })
 }
 
+function getEstudiantesCarreraCiudad() {
+    console.log("click EN BOTON GET ESTUDIANTES DE CARRERA Y CIUDAD");
+    let carreraBusqueda = document.querySelector("#carreraEstudianteBusqueda").value;
+    let ciudadBusqueda = document.querySelector("#ciudadEstudianteBusqueda").value;
+    let url = baseUrl + "rest/estudiantes/carrera/" + carreraBusqueda + "/ciudad/" + ciudadBusqueda;
+    console.log(url);
+    fetch(url)
+    .then(res => res.json())
+    .then(datos => {
+        // console.log(datos)
+        setTablaEstudiantes(datos)
+    })
+}
 
 function addCarrera() {
     console.log("click EN BOTON ADD CARRERAS");
@@ -526,8 +563,10 @@ function setTablaMatriculas(datos) {
     let colTr;
     let colTdCarreraMatricula;
     let contenidoCarreraMatricula;
-    let colTdEstudianteMatricula;
-    let contenidoEstudianteMatricula;
+    let colTdLUEstudianteMatricula;
+    let contenidoLUEstudianteMatricula;
+    let colTdApellidoEstudianteMatricula;
+    let contenidoApellidoEstudianteMatricula;
     let colTdIngresoMatricula;
     let contenidoIngresoMatricula;
     let colTdEgresoMatricula;
@@ -543,35 +582,32 @@ function setTablaMatriculas(datos) {
         contenidoCarreraMatricula = document.createTextNode(datos[index].carrera.nombre_carrera);
         colTdCarreraMatricula.appendChild(contenidoCarreraMatricula);
         colTr.appendChild(colTdCarreraMatricula);
-        colTdEstudianteMatricula = document.createElement("td");
-        contenidoEstudianteMatricula = document.createTextNode("["+datos[index].estudiante.lu+"] - "+datos[index].estudiante.nombre+" "+datos[index].estudiante.apellido);
-        colTdEstudianteMatricula.appendChild(contenidoEstudianteMatricula);
-        colTr.appendChild(colTdEstudianteMatricula);
+        colTdLUEstudianteMatricula = document.createElement("td");
+        contenidoLUEstudianteMatricula = document.createTextNode(datos[index].estudiante.lu);
+        colTdLUEstudianteMatricula.appendChild(contenidoLUEstudianteMatricula);
+        colTr.appendChild(colTdLUEstudianteMatricula);
+        colTdApellidoEstudianteMatricula = document.createElement("td");
+        contenidoApellidoEstudianteMatricula = document.createTextNode(datos[index].estudiante.apellido);
+        colTdApellidoEstudianteMatricula.appendChild(contenidoApellidoEstudianteMatricula);
+        colTr.appendChild(colTdApellidoEstudianteMatricula);
         colTdIngresoMatricula = document.createElement("td");
         contenidoIngresoMatricula = document.createTextNode(datos[index].fecha_inscripcion);
         colTdIngresoMatricula.appendChild(contenidoIngresoMatricula);
         colTr.appendChild(colTdIngresoMatricula);
         colTdEgresoMatricula = document.createElement("td");
-        if (datos[index].fecha_egreso == null) {
-          contenidoEgresoMatricula = document.createTextNode("-");
-          colTdEgresoMatricula.appendChild(contenidoEgresoMatricula);
-          colTr.appendChild(colTdEgresoMatricula);
-        } else {
-          contenidoEgresoMatricula = document.createTextNode(datos[index].fecha_egreso);
-          colTdEgresoMatricula.appendChild(contenidoEgresoMatricula);
-          colTr.appendChild(colTdEgresoMatricula);
-        }
+        contenidoEgresoMatricula = document.createTextNode(datos[index].fecha_egreso);
+        colTdEgresoMatricula.appendChild(contenidoEgresoMatricula);
+        colTr.appendChild(colTdEgresoMatricula);
         colTdGraduadoMatricula = document.createElement("td");
-        if (datos[index].graduado == false) {
-          contenidoGraduadoMatricula = document.createTextNode("NO");
-          colTdGraduadoMatricula.appendChild(contenidoGraduadoMatricula);
-          colTr.appendChild(colTdGraduadoMatricula);
-        } else {
-          contenidoGraduadoMatricula = document.createTextNode("SI");
-          colTdGraduadoMatricula.appendChild(contenidoGraduadoMatricula);
-          colTr.appendChild(colTdGraduadoMatricula);
+        if (datos[index].graduado) {
+            contenidoGraduadoMatricula = document.createTextNode("SI");
         }
-
+        else {
+            contenidoGraduadoMatricula = document.createTextNode("NO");
+        }
+        
+        colTdGraduadoMatricula.appendChild(contenidoGraduadoMatricula);
+        colTr.appendChild(colTdGraduadoMatricula);
         tbody.appendChild(colTr);
     }
 }
@@ -583,7 +619,7 @@ function setTablaEstudiantes(datos) {
     let contenidoId;
     let colTdNombre;
     let contenidoNombre;
-
+    
     let colTdApellido;
     let contenidoApellido;
     let colTdEdad;
@@ -606,28 +642,28 @@ function setTablaEstudiantes(datos) {
         contenidoNombre = document.createTextNode(datos[index].nombre);
         colTdNombre.appendChild(contenidoNombre);
         colTr.appendChild(colTdNombre);
-
-
+        
+        
         colTdApellido = document.createElement("td");
         contenidoApellido = document.createTextNode(datos[index].apellido);
         colTdApellido.appendChild(contenidoApellido);
         colTr.appendChild(colTdApellido);
-
+        
         colTdEdad = document.createElement("td");
         contenidoEdad = document.createTextNode(datos[index].edad);
         colTdEdad.appendChild(contenidoEdad);
         colTr.appendChild(colTdEdad);
-
+        
         colTdGenero = document.createElement("td");
         contenidoGenero = document.createTextNode(datos[index].genero);
         colTdGenero.appendChild(contenidoGenero);
         colTr.appendChild(colTdGenero);
-
+        
         colTdDni = document.createElement("td");
         contenidoDni = document.createTextNode(datos[index].dni);
         colTdDni.appendChild(contenidoDni);
         colTr.appendChild(colTdDni);
-
+        
         colTdCiudad = document.createElement("td");
         contenidoCiudad = document.createTextNode(datos[index].ciudad_residencia);
         colTdCiudad.appendChild(contenidoCiudad);
